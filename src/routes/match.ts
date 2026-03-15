@@ -75,7 +75,7 @@ matchRoutes.get("/agent/:agentId", async (c) => {
         high: 0.2,
         normal: 0.1,
         low: 0,
-      }[priority] || 0.1;
+      }[priority] ?? 0.1;
 
       const score = capabilityScore * 0.7 + priorityBoost;
 

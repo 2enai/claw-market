@@ -35,8 +35,7 @@ export const lookupAgentByApiKey: AgentLookup = async (apiKey) => {
   const [agent] = await db
     .select()
     .from(agents)
-    .where(eq(agents.apiKey, apiKey))
-    .limit(1);
+    .where(eq(agents.apiKey, apiKey));
 
   return agent ?? null;
 };
