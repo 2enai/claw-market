@@ -1,0 +1,31 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - main
+      - develop
+      - "feat/**"
+  pull_request:
+
+jobs:
+  test-and-typecheck:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+
+      - name: Install Dependencies
+        run: bun install
+
+      - name: TypeScript Check
+        run: bun run typecheck
+
+      - name: Run Tests
+        run: bun run test

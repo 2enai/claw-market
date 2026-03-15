@@ -10,6 +10,8 @@
     "db:generate": "drizzle-kit generate",
     "db:migrate": "drizzle-kit migrate",
     "db:push": "drizzle-kit push",
+    "lint": "bunx @biomejs/biome check .",
+    "check:ci": "bun run lint && bun run typecheck && bun run test",
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
     "test:watch": "vitest"

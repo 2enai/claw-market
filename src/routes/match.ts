@@ -5,6 +5,8 @@ import { eq } from "drizzle-orm";
 
 export const matchRoutes = new Hono();
 
+type TaskPriority = "low" | "normal" | "high" | "urgent";
+
 // Find best agents for a task
 matchRoutes.get("/task/:taskId", async (c) => {
   const taskId = c.req.param("taskId");
@@ -68,12 +70,15 @@ matchRoutes.get("/agent/:agentId", async (c) => {
         ? matchedCaps.length / required.length
         : 0.5;
 
+      const constraints =
+        (task.constraints as { priority?: TaskPriority } | null) ?? null;
+      const priority = constraints?.priority ?? "normal";
       const priorityBoost = {
         urgent: 0.3,
         high: 0.2,
         normal: 0.1,
         low: 0,
-      }[(task.constraints as any)?.priority || "normal"] || 0.1;
+      }[priority];
 
       const score = capabilityScore * 0.7 + priorityBoost;
 
