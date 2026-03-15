@@ -68,12 +68,14 @@ matchRoutes.get("/agent/:agentId", async (c) => {
         ? matchedCaps.length / required.length
         : 0.5;
 
-      const priorityBoost = {
+      const priorityMap: Record<string, number> = {
         urgent: 0.3,
         high: 0.2,
         normal: 0.1,
         low: 0,
-      }[(task.constraints as any)?.priority || "normal"] || 0.1;
+      };
+      const constraints = task.constraints as { priority?: string } | null;
+      const priorityBoost = priorityMap[constraints?.priority || "normal"] ?? 0.1;
 
       const score = capabilityScore * 0.7 + priorityBoost;
 
