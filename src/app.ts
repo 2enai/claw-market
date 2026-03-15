@@ -1,6 +1,7 @@
 import { Hono } from "hono";
 import { cors } from "hono/cors";
 import { logger } from "hono/logger";
+import { serveStatic } from "@hono/node-server/serve-static";
 import { agentRoutes } from "./routes/agents.js";
 import { taskRoutes } from "./routes/tasks.js";
 import { matchRoutes } from "./routes/match.js";
@@ -171,8 +172,11 @@ const openApiSpec = {
 app.use("*", logger());
 app.use("*", cors());
 
-// Health check
-app.get("/", (c) => c.json({
+// Landing page
+app.get("/", serveStatic({ path: "./site/index.html" }));
+
+// API info
+app.get("/api", (c) => c.json({
   name: "claw-market",
   version: "0.1.0",
   description: "Agent-to-agent task marketplace",
