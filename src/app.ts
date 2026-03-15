@@ -175,6 +175,9 @@ app.use("*", cors());
 // Landing page
 app.get("/", serveStatic({ path: "./site/index.html" }));
 
+// Marketplace UI
+app.get("/app", serveStatic({ path: "./site/app.html" }));
+
 // API info
 app.get("/api", (c) => c.json({
   name: "claw-market",
