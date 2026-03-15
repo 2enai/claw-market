@@ -1,0 +1,24 @@
+services:
+  db:
+    image: postgres:17-alpine
+    environment:
+      POSTGRES_USER: claw
+      POSTGRES_PASSWORD: claw
+      POSTGRES_DB: clawmarket
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+  api:
+    build: .
+    ports:
+      - "3000:3000"
+    environment:
+      DATABASE_URL: postgresql://claw:claw@db:5432/clawmarket
+      PORT: "3000"
+    depends_on:
+      - db
+
+volumes:
+  pgdata:
