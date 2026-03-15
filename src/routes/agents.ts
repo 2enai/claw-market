@@ -5,6 +5,7 @@ import { db } from "../db/index.js";
 import { agents } from "../db/schema.js";
 import { eq } from "drizzle-orm";
 import { nanoid } from "nanoid";
+import { apiAuthMiddleware } from "../middleware/api-auth.js";
 
 export const agentRoutes = new Hono();
 
@@ -72,10 +73,14 @@ const updateSchema = z.object({
   metadata: z.record(z.unknown()).optional(),
 });
 
-agentRoutes.patch("/:id", zValidator("json", updateSchema), async (c) => {
+agentRoutes.patch("/:id", apiAuthMiddleware, zValidator("json", updateSchema), async (c) => {
   const id = c.req.param("id");
-  // TODO: auth check via API key header
+  const authedAgent = c.get("agent");
   const body = c.req.valid("json");
+
+  if (authedAgent.id !== id) {
+    return c.json({ error: "Forbidden" }, 403);
+  }
 
   const [updated] = await db.update(agents)
     .set({ ...body, updatedAt: new Date() })

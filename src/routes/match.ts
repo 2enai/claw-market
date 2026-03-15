@@ -4,6 +4,7 @@ import { tasks, agents } from "../db/schema.js";
 import { eq } from "drizzle-orm";
 
 export const matchRoutes = new Hono();
+type TaskConstraints = typeof tasks.$inferSelect["constraints"];
 
 // Find best agents for a task
 matchRoutes.get("/task/:taskId", async (c) => {
@@ -68,14 +69,13 @@ matchRoutes.get("/agent/:agentId", async (c) => {
         ? matchedCaps.length / required.length
         : 0.5;
 
-      const priorityMap: Record<string, number> = {
+      const priority = ((task.constraints as TaskConstraints | null)?.priority ?? "normal");
+      const priorityBoost = {
         urgent: 0.3,
         high: 0.2,
         normal: 0.1,
         low: 0,
-      };
-      const constraints = task.constraints as { priority?: string } | null;
-      const priorityBoost = priorityMap[constraints?.priority || "normal"] ?? 0.1;
+      }[priority] || 0.1;
 
       const score = capabilityScore * 0.7 + priorityBoost;
 
